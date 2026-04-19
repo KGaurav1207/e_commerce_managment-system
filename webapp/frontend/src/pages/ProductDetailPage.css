@@ -1,0 +1,137 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.breadcrumb a { color: var(--primary); text-decoration: none; }
+.breadcrumb i { font-size: 10px; color: var(--text-light); }
+.breadcrumb span { color: var(--text-light); }
+
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  box-shadow: var(--shadow);
+}
+
+.product-img-section { position: sticky; top: 80px; height: fit-content; }
+.main-img-wrap {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--light);
+  aspect-ratio: 1;
+}
+.main-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.detail-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: var(--primary);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.product-detail-info { display: flex; flex-direction: column; gap: 16px; }
+.detail-category {
+  display: inline-block;
+  background: rgba(255,107,0,0.08);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.detail-title { font-size: 26px; font-weight: 700; color: var(--secondary); line-height: 1.3; }
+.detail-brand { font-size: 14px; color: var(--text-light); }
+.detail-brand strong { color: var(--primary); }
+.detail-rating { display: flex; align-items: center; gap: 12px; }
+.review-link { font-size: 13px; color: var(--primary); text-decoration: none; cursor: pointer; }
+
+.detail-price { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 16px 0; border-top: 1px solid var(--light-gray); border-bottom: 1px solid var(--light-gray); }
+.price-main { font-size: 32px; font-weight: 800; color: var(--secondary); }
+.price-crossed { font-size: 16px; color: var(--gray); text-decoration: line-through; }
+.price-save { font-size: 14px; font-weight: 700; color: var(--success); background: rgba(40,167,69,0.1); padding: 4px 10px; border-radius: 12px; }
+
+.stock-info { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.stock-count { color: var(--text-light); font-size: 12px; }
+
+.qty-section { display: flex; align-items: center; gap: 16px; font-size: 14px; font-weight: 600; }
+.qty-control { display: flex; align-items: center; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.qty-control button { width: 36px; height: 36px; background: var(--light); font-size: 14px; color: var(--text); display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+.qty-control button:hover { background: var(--primary); color: white; }
+.qty-control span { min-width: 44px; text-align: center; font-weight: 700; font-size: 16px; }
+
+.cta-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.cta-btns .btn-primary, .cta-btns .btn-secondary { flex: 1; min-width: 160px; }
+.wishlist-cta { width: 50px; min-width: 50px; padding: 0; font-size: 18px; color: var(--danger); border-color: var(--danger); }
+.wishlist-cta:hover { background: var(--danger); color: white; }
+
+.product-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: var(--light); padding: 16px; border-radius: var(--radius); }
+.product-highlights div { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; }
+.product-highlights i { color: var(--primary); font-size: 14px; }
+
+/* Tabs */
+.detail-tabs { background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; }
+.tabs-header { display: flex; border-bottom: 2px solid var(--light-gray); }
+.tab-btn {
+  padding: 16px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  background: none;
+  color: var(--text-light);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: var(--transition);
+}
+.tab-btn:hover { color: var(--primary); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.tab-content { padding: 28px; }
+.description-tab p { font-size: 15px; line-height: 1.9; color: var(--text); }
+
+.review-item { padding: 20px 0; border-bottom: 1px solid var(--light-gray); }
+.review-item:last-of-type { border-bottom: none; }
+.review-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 10px; }
+.reviewer-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; flex-shrink: 0;
+}
+.reviewer-avatar + div { flex: 1; }
+.reviewer-avatar + div strong { display: block; font-size: 14px; margin-bottom: 4px; }
+.review-date { font-size: 12px; color: var(--text-light); margin-left: auto; white-space: nowrap; }
+.review-comment { font-size: 14px; color: var(--text); line-height: 1.7; padding-left: 54px; }
+.no-reviews { font-size: 14px; color: var(--text-light); text-align: center; padding: 20px; }
+
+.review-form { margin-top: 24px; padding-top: 24px; border-top: 2px solid var(--light-gray); }
+.review-form h4 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+.rating-picker { display: flex; gap: 6px; margin-bottom: 4px; }
+.star-pick { font-size: 24px; color: #ddd; background: none; transition: var(--transition); }
+.star-pick.selected, .star-pick:hover { color: #f6ad55; }
+
+.spec-table { width: 100%; }
+.spec-table td { padding: 12px 16px; border-bottom: 1px solid var(--light-gray); font-size: 14px; }
+.spec-table td:first-child { font-weight: 700; color: var(--dark-gray); width: 40%; background: var(--light); }
+
+@media (max-width: 900px) {
+  .product-detail-grid { grid-template-columns: 1fr; gap: 20px; padding: 20px; }
+  .product-img-section { position: static; }
+  .detail-title { font-size: 20px; }
+  .price-main { font-size: 24px; }
+  .cta-btns .btn-primary, .cta-btns .btn-secondary { min-width: 120px; }
+}

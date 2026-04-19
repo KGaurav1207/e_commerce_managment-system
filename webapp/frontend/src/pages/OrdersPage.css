@@ -1,0 +1,40 @@
+.orders-list { display: flex; flex-direction: column; gap: 16px; }
+
+.order-card { }
+.order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--light-gray);
+}
+.order-id { display: flex; flex-direction: column; }
+.order-id span { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
+.order-id strong { font-size: 18px; color: var(--secondary); }
+
+.order-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.order-meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.order-meta div { display: flex; flex-direction: column; gap: 4px; }
+.order-meta label { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+.order-meta strong { font-size: 14px; color: var(--secondary); font-weight: 700; }
+
+.order-footer { display: flex; gap: 10px; padding-top: 16px; border-top: 1px solid var(--light-gray); }
+
+@media (max-width: 768px) {
+  .order-meta { grid-template-columns: repeat(2, 1fr); }
+}
