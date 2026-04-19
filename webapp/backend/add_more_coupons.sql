@@ -1,0 +1,21 @@
+-- Add more dummy coupons for testing
+INSERT INTO Coupon (code, description, discount_type, discount_value, minimum_amount, usage_limit, end_date) VALUES
+('SUMMER25', 'Summer special - 25% off on all orders', 'percentage', 25.00, 800.00, 200, DATE_ADD(CURRENT_DATE, INTERVAL 2 MONTH)),
+('FESTIVE100', 'Festive season - ₹100 off on minimum purchase', 'fixed', 100.00, 500.00, 150, DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH)),
+('LOYALTY15', 'Loyalty reward - 15% off for loyal customers', 'percentage', 15.00, 0.00, NULL, DATE_ADD(CURRENT_DATE, INTERVAL 6 MONTH)),
+('NEWUSER50', 'New user special - ₹50 off first order', 'fixed', 50.00, 0.00, 1000, DATE_ADD(CURRENT_DATE, INTERVAL 3 MONTH)),
+('BIRTHDAY30', 'Birthday special - 30% off on your birthday month', 'percentage', 30.00, 200.00, 500, DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH)),
+('FLASH20', 'Flash sale - 20% off for 24 hours only', 'percentage', 20.00, 300.00, 1000, DATE_ADD(CURRENT_DATE, INTERVAL 1 DAY)),
+('BULK10', 'Bulk purchase discount - 10% off on orders above ₹2000', 'percentage', 10.00, 2000.00, 50, DATE_ADD(CURRENT_DATE, INTERVAL 3 MONTH)),
+('FIRSTTIME', 'First time user - ₹150 off', 'fixed', 150.00, 0.00, 500, DATE_ADD(CURRENT_DATE, INTERVAL 2 MONTH)),
+('WEEKEND15', 'Weekend special - 15% off on weekends', 'percentage', 15.00, 0.00, 800, DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH)),
+('MIDNIGHT', 'Midnight special - ₹75 off on orders placed after midnight', 'fixed', 75.00, 0.00, 200, DATE_ADD(CURRENT_DATE, INTERVAL 2 WEEK)),
+('STUDENT20', 'Student discount - 20% off', 'percentage', 20.00, 0.00, 300, DATE_ADD(CURRENT_DATE, INTERVAL 6 MONTH)),
+('SENIOR25', 'Senior citizen discount - 25% off', 'percentage', 25.00, 0.00, 200, DATE_ADD(CURRENT_DATE, INTERVAL 12 MONTH)),
+('EMPLOYEE35', 'Employee special - 35% off', 'percentage', 35.00, 0.00, 100, DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH)),
+('VIP50', 'VIP customer special - ₹50 off', 'fixed', 50.00, 0.00, 50, DATE_ADD(CURRENT_DATE, INTERVAL 6 MONTH)),
+('HOLIDAY40', 'Holiday special - 40% off', 'percentage', 40.00, 0.00, 300, DATE_ADD(CURRENT_DATE, INTERVAL 2 WEEK)),
+('CLEARANCE70', 'Clearance sale - 70% off selected items', 'percentage', 70.00, 0.00, 100, DATE_ADD(CURRENT_DATE, INTERVAL 1 WEEK)),
+('EARLYBIRD', 'Early bird special - ₹200 off morning orders', 'fixed', 200.00, 0.00, 150, DATE_ADD(CURRENT_DATE, INTERVAL 1 WEEK)),
+('NIGHTOWL', 'Night owl special - 25% off late night orders', 'percentage', 25.00, 0.00, 250, DATE_ADD(CURRENT_DATE, INTERVAL 2 WEEK)),
+('RAINBOW', 'Rainbow sale - Random discount between 10-50%', 'percentage', 30.00, 0.00, 1000, DATE_ADD(CURRENT_DATE, INTERVAL 1 MONTH));
