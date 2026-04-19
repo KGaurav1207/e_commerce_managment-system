@@ -13,14 +13,15 @@ const getAllProducts = async (req, res) => {
 
     let query = `
                   SELECT p.Prod_ID AS product_id, p.name, p.description, p.price,
-                    NULL AS discount_price, p.image_url, p.Cat_ID AS category_id,
-              p.Supplier_ID AS supplier_id, p.Admin_ID AS admin_id, NULL AS brand, 0 AS rating,
-             0 AS total_reviews, c.name AS category_name, s.name AS supplier_name,
+                    p.image_url, p.Cat_ID AS category_id,
+              p.Supplier_ID AS supplier_id, p.Admin_ID AS admin_id,
+              p.rating, p.total_reviews,
+             c.name AS category_name, s.name AS supplier_name,
              i.stock_quantity
       FROM Product p
       LEFT JOIN Category c ON p.Cat_ID = c.Cat_ID
       LEFT JOIN Supplier s ON p.Supplier_ID = s.Supplier_ID
-      LEFT JOIN Inventory i ON p.Prod_ID = i.product_ID
+      LEFT JOIN Inventory i ON p.Prod_ID = i.product_id
       WHERE 1 = 1
     `;
     const params = [];
@@ -45,6 +46,7 @@ const getAllProducts = async (req, res) => {
     // Sorting
     if (sort === 'price_asc') query += ' ORDER BY p.price ASC';
     else if (sort === 'price_desc') query += ' ORDER BY p.price DESC';
+    else if (sort === 'rating') query += ' ORDER BY p.Prod_ID DESC';
     else query += ' ORDER BY p.Prod_ID DESC';
 
     query += ' LIMIT ? OFFSET ?';
@@ -80,14 +82,15 @@ const getProductById = async (req, res) => {
   try {
     const [products] = await db.query(
             `SELECT p.Prod_ID AS product_id, p.name, p.description, p.price,
-              NULL AS discount_price, p.image_url, p.Cat_ID AS category_id,
-              p.Supplier_ID AS supplier_id, p.Admin_ID AS admin_id, NULL AS brand,
-              0 AS rating, 0 AS total_reviews, c.name AS category_name,
+              p.image_url, p.Cat_ID AS category_id,
+              p.Supplier_ID AS supplier_id, p.Admin_ID AS admin_id,
+              p.rating, p.total_reviews,
+              c.name AS category_name,
               s.name AS supplier_name, i.stock_quantity
        FROM Product p
        LEFT JOIN Category c ON p.Cat_ID = c.Cat_ID
        LEFT JOIN Supplier s ON p.Supplier_ID = s.Supplier_ID
-       LEFT JOIN Inventory i ON p.Prod_ID = i.product_ID
+       LEFT JOIN Inventory i ON p.Prod_ID = i.product_id
        WHERE p.Prod_ID = ?`,
       [req.params.id]
     );
@@ -99,8 +102,8 @@ const getProductById = async (req, res) => {
     // Get reviews
     const [reviews] = await db.query(
       `SELECT r.*, u.name AS user_name FROM Review r
-       LEFT JOIN Users u ON r.user_id = u.user_id
-       WHERE r.product_id = ? ORDER BY r.review_date DESC`,
+       LEFT JOIN Users u ON r.User_ID = u.User_ID
+       WHERE r.Prod_ID = ? ORDER BY r.rev_date DESC`,
       [req.params.id]
     );
 
@@ -123,12 +126,14 @@ const createProduct = async (req, res) => {
     }
 
     const [result] = await db.query(
-      'INSERT INTO Product (name, description, price, Cat_ID, Supplier_ID, Admin_ID, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [name, description || null, price, category_id || null, supplier_id || null, adminId, image_url || null]
+      `INSERT INTO Product
+        (name, description, price, image_url, Cat_ID, Supplier_ID, Admin_ID)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [name, description || null, price, image_url || null, category_id || null, supplier_id || null, adminId]
     );
 
     const productId = result.insertId;
-    await db.query('INSERT INTO Inventory (product_ID, stock_quantity) VALUES (?, ?)', [productId, stock_quantity || 0]);
+    await db.query('INSERT INTO Inventory (product_ID, stock_quantity, min_stock_alert) VALUES (?, ?, ?)', [productId, stock_quantity || 0, 10]);
 
     res.status(201).json({ success: true, message: 'Product created successfully!', product_id: productId });
   } catch (error) {
@@ -144,12 +149,14 @@ const updateProduct = async (req, res) => {
     const { name, description, price, discount_price, image_url, category_id, supplier_id, brand, is_active, stock_quantity } = req.body;
 
     await db.query(
-      'UPDATE Product SET name=?, description=?, price=?, Cat_ID=?, Supplier_ID=?, image_url=? WHERE Prod_ID=?',
-      [name, description, price, category_id || null, supplier_id || null, image_url || null, req.params.id]
+      `UPDATE Product
+       SET name = ?, description = ?, price = ?, image_url = ?, Cat_ID = ?, Supplier_ID = ?
+       WHERE Prod_ID = ?`,
+      [name, description, price, image_url || null, category_id || null, supplier_id || null, req.params.id]
     );
 
     if (stock_quantity !== undefined) {
-      await db.query('UPDATE Inventory SET stock_quantity=? WHERE product_ID=?', [stock_quantity, req.params.id]);
+      await db.query('UPDATE Inventory SET stock_quantity = ? WHERE product_ID = ?', [stock_quantity, req.params.id]);
     }
 
     res.status(200).json({ success: true, message: 'Product updated successfully!' });

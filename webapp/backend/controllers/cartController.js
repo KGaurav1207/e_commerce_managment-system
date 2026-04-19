@@ -20,15 +20,12 @@ const getCart = async (req, res) => {
     const cartId = carts[0].Cart_ID;
 
     const [items] = await db.query(
-      `SELECT CONCAT(ci.Cart_ID, '-', ci.Prod_ID) AS cart_item_id,
-              ci.Cart_ID AS cart_id,
+      `SELECT ci.Cart_ID,
               ci.Prod_ID AS product_id,
               ci.quantity,
               p.name,
               p.price,
-              NULL AS discount_price,
               p.image_url,
-              NULL AS brand,
               i.stock_quantity
        FROM Cart_Item ci
        JOIN Product p ON ci.Prod_ID = p.Prod_ID
@@ -38,7 +35,7 @@ const getCart = async (req, res) => {
     );
 
     const totalAmount = items.reduce((sum, item) => {
-      const price = item.discount_price || item.price;
+      const price = item.price;
       return sum + (price * item.quantity);
     }, 0);
 

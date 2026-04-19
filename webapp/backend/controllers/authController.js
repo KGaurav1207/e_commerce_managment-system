@@ -4,6 +4,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
+const { ensureWishlistSchema, getColumns, getExistingColumn } = require('../utils/schemaCompat');
 require('dotenv').config();
 
 // Generate JWT Token
@@ -46,7 +47,7 @@ const registerUser = async (req, res) => {
     // Check if user already exists
     await connection.beginTransaction();
 
-    const [existingUser] = await connection.query('SELECT User_ID AS user_id FROM Users WHERE email = ?', [email]);
+    const [existingUser] = await connection.query('SELECT user_id FROM Users WHERE email = ?', [email]);
     if (existingUser.length > 0) {
       await connection.rollback();
       return res.status(400).json({ success: false, message: 'User with this email already exists.' });
@@ -64,8 +65,18 @@ const registerUser = async (req, res) => {
     const userId = result.insertId;
 
     // Auto-create cart and wishlist for new user
-    await connection.query('INSERT INTO Cart (user_id) VALUES (?)', [userId]);
-    await connection.query('INSERT INTO Wishlist (user_id) VALUES (?)', [userId]);
+    const cartColumns = await getColumns('Cart', connection);
+    const cartUserColumn = getExistingColumn(cartColumns, ['user_id', 'User_ID']);
+    if (cartUserColumn) {
+      await connection.query(`INSERT INTO Cart (${cartUserColumn}) VALUES (?)`, [userId]);
+    }
+
+    await ensureWishlistSchema(connection);
+    const wishlistColumns = await getColumns('Wishlist', connection);
+    const wishlistUserColumn = getExistingColumn(wishlistColumns, ['user_id', 'User_ID']);
+    if (wishlistUserColumn) {
+      await connection.query(`INSERT INTO Wishlist (${wishlistUserColumn}) VALUES (?)`, [userId]);
+    }
 
     await connection.commit();
 
@@ -102,7 +113,7 @@ const loginUser = async (req, res) => {
     }
 
     // Find user by email
-    const [users] = await db.query('SELECT User_ID AS user_id, name, email, phone, password FROM Users WHERE email = ?', [email]);
+    const [users] = await db.query('SELECT user_id, name, email, phone, password FROM Users WHERE email = ?', [email]);
     if (users.length === 0) {
       return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
@@ -110,7 +121,7 @@ const loginUser = async (req, res) => {
     const user = users[0];
 
     // Compare password
-    const isMatch = await verifyPassword(db, 'Users', 'User_ID', user.user_id, user.password, password);
+    const isMatch = await verifyPassword(db, 'Users', 'user_id', user.user_id, user.password, password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
@@ -144,13 +155,13 @@ const loginAdmin = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email and password are required.' });
     }
 
-    const [admins] = await db.query('SELECT Admin_ID AS admin_id, name, email, password FROM Admin WHERE email = ?', [email]);
+    const [admins] = await db.query('SELECT admin_id, name, email, password FROM Admin WHERE email = ?', [email]);
     if (admins.length === 0) {
       return res.status(401).json({ success: false, message: 'Invalid admin credentials.' });
     }
 
     const admin = admins[0];
-    const isMatch = await verifyPassword(db, 'Admin', 'Admin_ID', admin.admin_id, admin.password, password);
+    const isMatch = await verifyPassword(db, 'Admin', 'admin_id', admin.admin_id, admin.password, password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid admin credentials.' });
     }

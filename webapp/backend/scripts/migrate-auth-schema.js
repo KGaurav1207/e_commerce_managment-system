@@ -27,7 +27,7 @@ async function runMigration() {
         wishlist_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL UNIQUE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES Users(User_ID) ON DELETE CASCADE
+        FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
       )
     `);
   }
@@ -41,13 +41,13 @@ async function runMigration() {
         product_id INT NOT NULL,
         added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (wishlist_id) REFERENCES Wishlist(wishlist_id) ON DELETE CASCADE,
-        FOREIGN KEY (product_id) REFERENCES Product(Prod_ID) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES Product(product_id) ON DELETE CASCADE,
         UNIQUE KEY unique_wishlist_product (wishlist_id, product_id)
       )
     `);
   }
 
-  const [existingAdmin] = await connection.query('SELECT Admin_ID FROM Admin WHERE email = ?', ['admin@shopmart.com']);
+  const [existingAdmin] = await connection.query('SELECT admin_id FROM Admin WHERE email = ?', ['admin@shopmart.com']);
   if (existingAdmin.length === 0) {
     await connection.query(
       'INSERT INTO Admin (name, email, password) VALUES (?, ?, ?)',

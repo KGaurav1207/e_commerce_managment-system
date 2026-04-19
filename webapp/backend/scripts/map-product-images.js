@@ -69,7 +69,7 @@ async function mapImagesToProducts() {
     port: Number(process.env.DB_PORT || 3306),
   });
 
-  const [products] = await connection.query('SELECT Prod_ID, name FROM Product ORDER BY Prod_ID ASC');
+  const [products] = await connection.query('SELECT product_id, name FROM Product ORDER BY product_id ASC');
 
   let updated = 0;
   const unmatched = [];
@@ -82,7 +82,7 @@ async function mapImagesToProducts() {
     }
 
     const imageUrl = `${IMAGE_BASE}/${encodeURIComponent(imageFile)}`;
-    await connection.query('UPDATE Product SET image_url = ? WHERE Prod_ID = ?', [imageUrl, product.Prod_ID]);
+    await connection.query('UPDATE Product SET image_url = ? WHERE product_id = ?', [imageUrl, product.product_id]);
     updated += 1;
   }
 
