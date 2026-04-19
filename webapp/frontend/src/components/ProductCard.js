@@ -8,12 +8,13 @@ import { resolveImageUrl, handleImageError } from '../utils/image';
 import './ProductCard.css';
 
 const StarRating = ({ rating }) => {
+  const num = parseFloat(rating) || 0;
   return (
     <div className="stars">
       {[1, 2, 3, 4, 5].map(i => (
-        <i key={i} className={`fas fa-star star ${i <= Math.round(rating) ? 'filled' : ''}`}></i>
+        <i key={i} className={`fas fa-star star ${i <= Math.round(num) ? 'filled' : ''}`}></i>
       ))}
-      <span className="rating-val">{rating?.toFixed(1) || '0.0'}</span>
+      <span className="rating-val">{num.toFixed(1)}</span>
     </div>
   );
 };
@@ -24,21 +25,21 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
-    if (!user) { toast.warning('Please login to add to cart'); return; }
+    if (!user) { toast.warning('Please login to add items to your cart'); return; }
     try {
       await addToCart(product.product_id, 1);
-      toast.success('Added to cart!');
-    } catch { toast.error('Failed to add to cart'); }
+      toast.success(`${product.name} added to your cart!`);
+    } catch { toast.error(`Could not add ${product.name} to cart`); }
   };
 
   const handleAddToWishlist = async (e) => {
     e.preventDefault();
-    if (!user) { toast.warning('Please login to save wishlist'); return; }
+    if (!user) { toast.warning('Please login to save items to your wishlist'); return; }
     try {
       await api.post('/wishlist', { product_id: product.product_id });
-      toast.success('Added to wishlist!');
+      toast.success(`${product.name} saved to your wishlist!`);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Could not add to wishlist');
+      toast.error(err.response?.data?.message || `Could not save ${product.name} to wishlist`);
     }
   };
 

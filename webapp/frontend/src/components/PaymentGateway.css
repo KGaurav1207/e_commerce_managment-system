@@ -1,0 +1,276 @@
+/* ============================================================
+   Payment Gateway Styles
+   ============================================================ */
+.payment-gateway {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.payment-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+  padding: 24px;
+  text-align: center;
+}
+
+.payment-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.amount-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.amount-label {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.amount-value {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.payment-method-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 20px;
+  color: var(--text-light);
+}
+
+.payment-method-btn:hover {
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255,107,0,0.1);
+}
+
+.payment-method-btn.active {
+  border-color: var(--primary);
+  background: rgba(255,107,0,0.05);
+  color: var(--primary);
+}
+
+.method-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.method-info strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.method-info span {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.payment-details {
+  padding: 24px;
+}
+
+.payment-form {
+  margin-bottom: 20px;
+}
+
+.upi-info,
+.netbanking-info,
+.wallet-info {
+  background: var(--light);
+  padding: 12px;
+  border-radius: var(--radius);
+  margin-top: 16px;
+}
+
+.upi-info p,
+.netbanking-info p,
+.wallet-info p {
+  font-size: 13px;
+  color: var(--text-light);
+  margin: 0;
+  text-align: center;
+}
+
+.payment-actions {
+  display: flex;
+  gap: 12px;
+  padding: 0 24px 24px;
+}
+
+.payment-actions .btn {
+  flex: 1;
+}
+
+.security-info {
+  background: var(--light);
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.security-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.security-badges i {
+  color: var(--success);
+  font-size: 16px;
+}
+
+.accepted-cards {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.accepted-cards i {
+  font-size: 20px;
+  color: var(--text-light);
+}
+
+/* ============================================================
+   Payment Form Animations
+   ============================================================ */
+.payment-form .form-control {
+  transition: var(--transition);
+}
+
+.payment-form .form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.1);
+}
+
+/* ============================================================
+   Responsive Design
+   ============================================================ */
+@media (max-width: 768px) {
+  .payment-gateway {
+    margin: 0 16px;
+  }
+  
+  .payment-methods {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  
+  .payment-details {
+    padding: 20px;
+  }
+  
+  .payment-actions {
+    padding: 0 20px 20px;
+    flex-direction: column;
+  }
+  
+  .security-info {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .amount-value {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-header {
+    padding: 20px 16px;
+  }
+  
+  .payment-methods {
+    padding: 16px;
+  }
+  
+  .payment-details {
+    padding: 16px;
+  }
+  
+  .payment-actions {
+    padding: 0 16px 16px;
+  }
+  
+  .security-info {
+    padding: 16px;
+  }
+}
+
+/* ============================================================
+   Loading States
+   ============================================================ */
+.payment-actions .btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.payment-actions .btn:disabled:hover {
+  box-shadow: none !important;
+}
+
+/* ============================================================
+   Card Input Formatting
+   ============================================================ */
+.payment-form input[name="cardNumber"] {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+.payment-form input[name="cvv"] {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+}
+
+/* ============================================================
+   Success Animation
+   ============================================================ */
+@keyframes paymentSuccess {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.payment-success {
+  animation: paymentSuccess 0.5s ease-out;
+}

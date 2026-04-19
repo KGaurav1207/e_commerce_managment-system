@@ -28,6 +28,13 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className="admin-page-header">
         <h2>📊 Dashboard Overview</h2>
+        <div className="admin-nav">
+          <a href="/admin/dashboard" className="admin-nav-link active">Dashboard</a>
+          <a href="/admin/products" className="admin-nav-link">Products</a>
+          <a href="/admin/orders" className="admin-nav-link">Orders</a>
+          <a href="/admin/users" className="admin-nav-link">Users</a>
+          <a href="/admin/coupons" className="admin-nav-link">Coupons</a>
+        </div>
         <span style={{ fontSize: 13, color: 'var(--text-light)' }}>Welcome back, Admin</span>
       </div>
 

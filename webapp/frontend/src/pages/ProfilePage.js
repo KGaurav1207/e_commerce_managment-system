@@ -22,7 +22,7 @@ const ProfilePage = () => {
     e.preventDefault();
     try {
       await api.put('/users/profile', { name: profile.name, phone: profile.phone });
-      toast.success('Profile updated!');
+      toast.success(`Profile updated successfully, ${profile.name?.split(' ')[0] || 'there'}!`);
     } catch { toast.error('Could not update profile'); }
   };
 
@@ -31,16 +31,16 @@ const ProfilePage = () => {
     if (pwdForm.newPassword !== pwdForm.confirm) { toast.error('Passwords do not match'); return; }
     try {
       await api.put('/users/change-password', { currentPassword: pwdForm.currentPassword, newPassword: pwdForm.newPassword });
-      toast.success('Password changed!');
+      toast.success('Password changed successfully! Please use your new password next time.');
       setPwdForm({ currentPassword: '', newPassword: '', confirm: '' });
-    } catch (err) { toast.error(err.response?.data?.message || 'Error'); }
+    } catch (err) { toast.error(err.response?.data?.message || 'Could not change password'); }
   };
 
   const deleteAddress = async (id) => {
     try {
       await api.delete(`/users/addresses/${id}`);
       setAddresses(addresses.filter(a => a.address_id !== id));
-      toast.success('Address deleted!');
+      toast.success('Address removed from your profile');
     } catch { toast.error('Error deleting address'); }
   };
 

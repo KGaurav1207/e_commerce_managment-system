@@ -30,7 +30,13 @@ import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminInventory from './pages/admin/AdminInventory';
+import CouponManagement from './pages/admin/CouponManagement';
 import AdminLogin from './pages/admin/AdminLogin';
+import FAQPage from './pages/FAQPage';
+import ShippingPolicyPage from './pages/ShippingPolicyPage';
+import ReturnsPage from './pages/ReturnsPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
 
 // Protected Route
 const ProtectedRoute = ({ children }) => {
@@ -74,6 +80,14 @@ const AppLayout = () => {
             <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
             <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
             <Route path="/admin/inventory" element={<AdminRoute><AdminInventory /></AdminRoute>} />
+            <Route path="/admin/coupons" element={<AdminRoute><CouponManagement /></AdminRoute>} />
+
+            {/* Information Pages */}
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/shipping-policy" element={<ShippingPolicyPage />} />
+            <Route path="/returns" element={<ReturnsPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
           </Routes>
         </main>
         <Footer />

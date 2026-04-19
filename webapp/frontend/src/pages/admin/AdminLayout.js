@@ -16,6 +16,7 @@ const AdminLayout = ({ children }) => {
     { to: '/admin/orders', icon: 'fas fa-shopping-bag', label: 'Orders' },
     { to: '/admin/users', icon: 'fas fa-users', label: 'Customers' },
     { to: '/admin/inventory', icon: 'fas fa-warehouse', label: 'Inventory' },
+    { to: '/admin/coupons', icon: 'fas fa-ticket-alt', label: 'Coupons' },
   ];
 
   return (

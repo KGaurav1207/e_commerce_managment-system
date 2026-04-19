@@ -1,8 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import './ProductsPage.css';
+
+const getFiltersFromSearchParams = (searchParams) => ({
+  search: searchParams.get('search') || '',
+  category: searchParams.get('category') || '',
+  min_price: searchParams.get('min_price') || '',
+  max_price: searchParams.get('max_price') || '',
+  sort: searchParams.get('sort') || 'newest',
+  page: Number(searchParams.get('page') || 1),
+  limit: Number(searchParams.get('limit') || 12),
+});
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -11,42 +21,54 @@ const ProductsPage = () => {
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-
-  const [filters, setFilters] = useState({
-    search: searchParams.get('search') || '',
-    category: searchParams.get('category') || '',
-    min_price: '',
-    max_price: '',
-    sort: searchParams.get('sort') || 'newest',
-    page: 1,
-    limit: 12,
-  });
-
   useEffect(() => {
     api.get('/categories').then(r => setCategories(r.data.categories || [])).catch(() => {});
   }, []);
+  const filters = getFiltersFromSearchParams(searchParams);
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = Object.fromEntries(Object.entries(filters).filter(([_, v]) => v !== ''));
-      const res = await api.get('/products', { params });
-      setProducts(res.data.products || []);
-      setTotal(res.data.total || 0);
-      setTotalPages(res.data.totalPages || 1);
-    } catch { setProducts([]); }
-    finally { setLoading(false); }
-  }, [filters]);
+  useEffect(() => {
+    let ignore = false;
 
-  useEffect(() => { fetchProducts(); }, [fetchProducts]);
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const params = Object.fromEntries(
+          Object.entries(filters).filter(([_, v]) => v !== '')
+        );
+        const res = await api.get('/products', { params });
+        if (ignore) return;
+        setProducts(res.data.products || []);
+        setTotal(res.data.total || 0);
+        setTotalPages(res.data.totalPages || 1);
+      } catch {
+        if (!ignore) setProducts([]);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+
+    fetchProducts();
+    return () => { ignore = true; };
+  }, [filters.search, filters.category, filters.min_price, filters.max_price, filters.sort, filters.page, filters.limit]);
+
+  const updateFilters = (patch) => {
+    const next = { ...filters, ...patch };
+    const nextParams = {};
+    Object.entries(next).forEach(([key, value]) => {
+      if (value !== '' && value !== null && value !== undefined && value !== 1 && !(key === 'limit' && value === 12)) {
+        nextParams[key] = String(value);
+      }
+    });
+    setSearchParams(nextParams);
+  };
 
   const handleFilterChange = (key, value) => {
-    setFilters(f => ({ ...f, [key]: value, page: 1 }));
+    updateFilters({ [key]: value, page: 1 });
   };
 
   const handleSort = e => handleFilterChange('sort', e.target.value);
   const handleCategory = (id) => handleFilterChange('category', id === filters.category ? '' : id);
-  const handlePage = (p) => setFilters(f => ({ ...f, page: p }));
+  const handlePage = (p) => updateFilters({ page: p });
 
   return (
     <div className="products-page">
@@ -54,8 +76,15 @@ const ProductsPage = () => {
         {/* Page Header */}
         <div className="products-header">
           <div>
+            {filters.sort === 'price_desc' && (
+              <div className="deals-banner">
+                <span className="deals-badge">HOT DEALS</span>
+                <span className="deals-text">Best prices on top products!</span>
+              </div>
+            )}
             <h1 className="section-title">
-              {filters.search ? `Results for "${filters.search}"` : 'All Products'}
+              {filters.search ? `Results for "${filters.search}"` : 
+               filters.sort === 'price_desc' ? 'Hot Deals' : 'All Products'}
             </h1>
             <p className="result-count">{total} products found</p>
           </div>
@@ -117,12 +146,13 @@ const ProductsPage = () => {
                     onChange={e => handleFilterChange('max_price', e.target.value)}
                   />
                 </div>
-                <button className="btn btn-primary btn-full btn-sm" style={{ marginTop: 10 }}
-                  onClick={fetchProducts}>Apply</button>
+                <button className="btn btn-primary btn-full btn-sm" style={{ marginTop: 10 }} type="button">
+                  Apply
+                </button>
               </div>
 
               <button className="btn btn-outline btn-full btn-sm"
-                onClick={() => setFilters({ search: '', category: '', min_price: '', max_price: '', sort: 'newest', page: 1, limit: 12 })}>
+                onClick={() => setSearchParams({})}>
                 <i className="fas fa-times"></i> Clear Filters
               </button>
             </div>

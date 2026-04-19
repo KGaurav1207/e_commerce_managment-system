@@ -24,7 +24,7 @@ const AdminProducts = () => {
     e.preventDefault();
     try {
       await api.post('/products', form);
-      toast.success('Product created!');
+      toast.success(`"${form.name}" added to the product catalog!`);
       setShowForm(false);
       setForm({ name: '', description: '', price: '', discount_price: '', category_id: '', brand: '', image_url: '', stock_quantity: '' });
       fetchProducts();
@@ -35,7 +35,7 @@ const AdminProducts = () => {
     if (!window.confirm('Delete this product?')) return;
     try {
       await api.delete(`/products/${id}`);
-      toast.success('Product deleted!');
+      toast.success('Product removed from the catalog');
       fetchProducts();
     } catch (err) { toast.error(err.response?.data?.message || 'Error deleting product'); }
   };

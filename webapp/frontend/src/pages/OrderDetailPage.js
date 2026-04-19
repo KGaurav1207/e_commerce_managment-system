@@ -59,7 +59,7 @@ const OrderDetailPage = () => {
                         <span>{new Date(tracking.find(t => t.status.toLowerCase().includes(step.toLowerCase().split(' ')[0])).updated_at).toLocaleDateString()}</span>
                       )}
                     </div>
-                    {i < statusSteps.length - 1 && <div className={`track-line ${i < currentStepIdx - 1 ? 'done' : ''}`}></div>}
+                    {i < statusSteps.length - 1 && <div key={`line-${i}`} className={`track-line ${i < currentStepIdx - 1 ? 'done' : ''}`}></div>}
                   </div>
                 ))}
               </div>
@@ -75,12 +75,12 @@ const OrderDetailPage = () => {
                     alt={item.name}
                     onError={(e) => handleImageError(e, { name: item.name, size: '70x70' })}
                   />
-                  <div className="order-item-info">
+                  <div key={`info-${item.order_detail_id}`} className="order-item-info">
                     <strong>{item.name}</strong>
                     <span>{item.brand}</span>
                     <span>Qty: {item.quantity}</span>
                   </div>
-                  <div className="order-item-price">
+                  <div key={`price-${item.order_detail_id}`} className="order-item-price">
                     <strong>₹{(item.price * item.quantity).toLocaleString('en-IN')}</strong>
                     <span>₹{parseFloat(item.price).toLocaleString('en-IN')} × {item.quantity}</span>
                   </div>
@@ -125,9 +125,15 @@ const OrderDetailPage = () => {
             </div>
 
             {order.status === 'delivered' && (
-              <Link to="/products" className="btn btn-primary btn-full">
-                <i className="fas fa-star"></i> Rate & Review
-              </Link>
+              <div className="review-section">
+                <h4><i className="fas fa-star"></i> Rate & Review Products</h4>
+                <p className="review-subtitle">Share your experience with the products you received</p>
+                {items.map(item => (
+                  <Link key={item.order_detail_id} to={`/products/${item.product_id}`} className="btn btn-outline btn-full review-btn">
+                    <i className="fas fa-star"></i> Review {item.name}
+                  </Link>
+                ))}
+              </div>
             )}
           </div>
         </div>

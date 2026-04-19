@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../utils/api';
 import { useCart } from '../context/CartContext';
@@ -7,17 +7,21 @@ import { useAuth } from '../context/AuthContext';
 import { resolveImageUrl, handleImageError } from '../utils/image';
 import './ProductDetailPage.css';
 
-const StarRating = ({ rating, size = 16 }) => (
-  <div className="stars" style={{ fontSize: size }}>
-    {[1, 2, 3, 4, 5].map(i => (
-      <i key={i} className={`fas fa-star star ${i <= Math.round(rating) ? 'filled' : ''}`}></i>
-    ))}
-    <span style={{ fontSize: 13, color: 'var(--text-light)', marginLeft: 6 }}>{rating?.toFixed(1)}</span>
-  </div>
-);
+const StarRating = ({ rating, size = 16 }) => {
+  const num = parseFloat(rating) || 0;
+  return (
+    <div className="stars" style={{ fontSize: size }}>
+      {[1, 2, 3, 4, 5].map(i => (
+        <i key={i} className={`fas fa-star star ${i <= Math.round(num) ? 'filled' : ''}`}></i>
+      ))}
+      <span style={{ fontSize: 13, color: 'var(--text-light)', marginLeft: 6 }}>{num.toFixed(1)}</span>
+    </div>
+  );
+};
 
 const ProductDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { user } = useAuth();
   const [product, setProduct] = useState(null);
@@ -40,30 +44,67 @@ const ProductDetailPage = () => {
   }, [id]);
 
   const handleAddToCart = async () => {
-    if (!user) { toast.warning('Please login to add to cart'); return; }
+    if (!user) {
+      toast.warning('Please login to add items to your cart');
+      navigate('/login');
+      return;
+    }
+    if (!product || !product.product_id) {
+      toast.error('Product information not available');
+      return;
+    }
+    if (qty <= 0) {
+      toast.error('Please select a valid quantity');
+      return;
+    }
     try {
       await addToCart(product.product_id, qty);
-      toast.success(`${qty} item(s) added to cart! 🛒`);
-    } catch { toast.error('Could not add to cart'); }
+      toast.success(`${qty}x ${product.name} added to your cart!`);
+    } catch (error) {
+      toast.error(error.response?.data?.message || `Could not add ${product.name} to cart`);
+    }
   };
 
   const handleWishlist = async () => {
-    if (!user) { toast.warning('Please login'); return; }
+    if (!user) { toast.warning('Please login to save items to your wishlist'); return; }
     try {
       await api.post('/wishlist', { product_id: product.product_id });
-      toast.success('Added to wishlist! ❤️');
-    } catch (err) { toast.error(err.response?.data?.message || 'Error'); }
+      toast.success(`${product.name} saved to your wishlist!`);
+    } catch (err) { toast.error(err.response?.data?.message || 'Could not save to wishlist'); }
+  };
+
+  const handleBuyNow = async () => {
+    if (!user) {
+      toast.warning('Please login to continue to checkout');
+      navigate('/login');
+      return;
+    }
+    if (!product || !product.product_id) {
+      toast.error('Product information not available');
+      return;
+    }
+    if (qty <= 0) {
+      toast.error('Please select a valid quantity');
+      return;
+    }
+    try {
+      await addToCart(product.product_id, qty);
+      toast.info(`Taking you to checkout with ${product.name}...`);
+      navigate('/checkout');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Could not proceed to checkout');
+    }
   };
 
   const handleReview = async e => {
     e.preventDefault();
-    if (!user) { toast.warning('Please login to review'); return; }
+    if (!user) { toast.warning('Please login to write a review'); return; }
     try {
       await api.post('/reviews', { product_id: id, ...reviewForm });
-      toast.success('Review submitted!');
+      toast.success('Your review has been submitted. Thank you!');
       const res = await api.get(`/products/${id}`);
       setReviews(res.data.reviews || []);
-    } catch (err) { toast.error(err.response?.data?.message || 'Error'); }
+    } catch (err) { toast.error(err.response?.data?.message || 'Could not submit your review'); }
   };
 
   if (loading) return <div className="spinner-wrapper"><div className="spinner"></div></div>;
@@ -151,7 +192,7 @@ const ProductDetailPage = () => {
               <button className="btn btn-primary btn-lg" onClick={handleAddToCart} disabled={!product.stock_quantity}>
                 <i className="fas fa-shopping-cart"></i> Add to Cart
               </button>
-              <button className="btn btn-secondary btn-lg">
+              <button className="btn btn-secondary btn-lg" onClick={handleBuyNow} disabled={!product.stock_quantity}>
                 <i className="fas fa-bolt"></i> Buy Now
               </button>
               <button className="btn btn-outline wishlist-cta" onClick={handleWishlist}>
@@ -190,14 +231,14 @@ const ProductDetailPage = () => {
             {activeTab === 'reviews' && (
               <div className="reviews-tab">
                 {reviews.map(r => (
-                  <div className="review-item" key={r.review_id}>
+                  <div className="review-item" key={r.Rev_ID}>
                     <div className="review-header">
                       <div className="reviewer-avatar">{r.user_name?.[0]?.toUpperCase()}</div>
                       <div>
                         <strong>{r.user_name}</strong>
                         <StarRating rating={r.rating} size={13} />
                       </div>
-                      <span className="review-date">{new Date(r.review_date).toLocaleDateString()}</span>
+                      <span className="review-date">{new Date(r.rev_date).toLocaleDateString()}</span>
                     </div>
                     <p className="review-comment">{r.comment}</p>
                   </div>

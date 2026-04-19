@@ -52,7 +52,19 @@
   background: var(--primary);
 }
 
-.footer-col ul li { margin-bottom: 10px; }
+.footer-col ul li { 
+  margin-bottom: 10px; 
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+}
+.footer-col ul li i { 
+  color: var(--primary); 
+  margin-top: 2px; 
+  min-width: 14px; 
+}
 .footer-col ul a {
   color: rgba(255,255,255,0.65);
   font-size: 13px;
@@ -60,16 +72,6 @@
   text-decoration: none;
 }
 .footer-col ul a:hover { color: var(--primary); padding-left: 4px; }
-
-.contact-info p {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.65);
-  margin-bottom: 10px;
-}
-.contact-info i { color: var(--primary); margin-top: 2px; min-width: 14px; }
 
 .footer-middle {
   border-top: 1px solid rgba(255,255,255,0.08);

@@ -92,13 +92,205 @@
 .admin-table-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--light-gray); }
 .admin-table-header h3 { font-size: 16px; font-weight: 700; color: var(--secondary); }
 
-.status-select {
-  padding: 5px 10px;
+.status-select { padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; }
+
+/* Modal Styles for Admin */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 10;
+  color: var(--text-light);
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text);
+}
+
+.receipt-modal {
+  width: 100%;
+  max-width: 800px;
+}
+
+/* Coupon Management Styles */
+.coupon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.coupon-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  background: white;
+  transition: var(--transition);
+}
+
+.coupon-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.coupon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.coupon-info {
+  flex: 1;
+}
+
+.coupon-info h4 {
+  color: var(--primary);
+  margin-bottom: 4px;
+  font-size: 16px;
+}
+
+.coupon-info p {
+  color: var(--text-light);
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.coupon-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.coupon-meta span {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--light-gray);
+}
+
+.coupon-type.percentage {
+  background: linear-gradient(45deg, #28a745, #20bf6b);
+  color: white;
+  font-weight: 600;
+}
+
+.coupon-type.fixed {
+  background: linear-gradient(45deg, #17a2b8, #138496);
+  color: white;
+  font-weight: 600;
+}
+
+.coupon-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.coupon-status.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.coupon-status.inactive {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.coupon-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.coupon-actions .btn {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* Coupon form grid */
+.coupon-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.coupon-active-toggle {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px 14px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  font-size: 12px;
-  background: white;
-  cursor: pointer;
+  background: var(--white);
+  transition: var(--transition);
+  height: 42px;
+}
+
+.toggle-label:hover { border-color: var(--primary); }
+
+.toggle-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  flex-shrink: 0;
+}
+
+.toggle-text { font-size: 13px; color: var(--text); }
+
+.coupon-code-cell {
+  color: var(--primary);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.coupon-desc-cell {
+  max-width: 180px;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -106,4 +298,7 @@
   .admin-layout { flex-direction: column; }
   .admin-sidebar { width: 100%; padding: 12px 0; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .coupon-header { flex-direction: column; align-items: flex-start; }
+  .coupon-meta { flex-direction: column; gap: 6px; }
+  .coupon-actions { flex-direction: column; }
 }

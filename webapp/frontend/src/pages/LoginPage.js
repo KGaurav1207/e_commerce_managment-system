@@ -19,12 +19,12 @@ const LoginPage = () => {
     setLoading(true);
     try {
       if (loginMode === 'admin') {
-        await adminLogin(form.email, form.password);
-        toast.success('Admin login successful!');
+        const data = await adminLogin(form.email, form.password);
+        toast.success(`Welcome back, ${data.admin?.name || 'Admin'}! Dashboard is ready.`);
         navigate('/admin');
       } else {
-        await login(form.email, form.password);
-        toast.success('Welcome back! 🎉');
+        const data = await login(form.email, form.password);
+        toast.success(`Welcome back, ${data.user?.name?.split(' ')[0] || 'there'}! Great to see you.`);
         navigate('/');
       }
     } catch (err) {
@@ -117,14 +117,7 @@ const LoginPage = () => {
               </button>
             </form>
 
-            <div className="auth-divider"><span>OR</span></div>
-
-            <div className="social-auth">
-              <button className="social-btn google-btn">
-                <i className="fab fa-google"></i> Continue with Google
-              </button>
-            </div>
-
+            
             <p className="auth-switch">
               New to ShopMart? <Link to="/register">Create an account</Link>
             </p>

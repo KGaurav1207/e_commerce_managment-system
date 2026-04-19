@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import api from '../utils/api';
+import Receipt from '../components/Receipt';
 import './OrdersPage.css';
 
 const statusConfig = {
@@ -16,10 +18,66 @@ const statusConfig = {
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [receiptData, setReceiptData] = useState(null);
 
   useEffect(() => {
     api.get('/orders').then(r => setOrders(r.data.orders || [])).catch(() => {}).finally(() => setLoading(false));
   }, []);
+
+  const handleViewReceipt = async (orderId) => {
+    try {
+      // Try to get receipt from payments endpoint first
+      const receiptRes = await api.get(`/payments/receipt/${orderId}`);
+      if (receiptRes.data.success) {
+        setReceiptData(receiptRes.data.receipt);
+        setShowReceipt(true);
+        return;
+      }
+    } catch (err) {
+      // If payment receipt fails, create receipt from order data
+      try {
+        const orderRes = await api.get(`/orders/${orderId}`);
+        if (orderRes.data.success) {
+          const order = orderRes.data.order;
+          const items = orderRes.data.items || [];
+          
+          // Create receipt data from order
+          const receiptData = {
+            order_id: orderId,
+            created_at: order.order_date,
+            total_amount: order.total_amount,
+            payment_method: order.payment_method,
+            status: order.status,
+            shipping_cost: order.total_amount > 499 ? 0 : 49,
+            discount_amount: 0,
+            shipping_address: null,
+            items: items.map(item => ({
+              order_item_id: item.order_item_id,
+              product_id: item.product_id,
+              name: item.name,
+              quantity: item.quantity,
+              price: item.price,
+              discount_price: item.discount_price || item.price,
+              image_url: item.image_url
+            })),
+            payment: {
+              transaction_id: 'TXN' + Date.now(),
+              payment_method: order.payment_method,
+              amount: order.total_amount,
+              status: 'success',
+              payment_date: order.order_date
+            }
+          };
+          
+          setReceiptData(receiptData);
+          setShowReceipt(true);
+        }
+      } catch (orderErr) {
+        toast.error('Failed to generate receipt');
+      }
+    }
+  };
 
   if (loading) return <div className="spinner-wrapper"><div className="spinner"></div></div>;
 
@@ -76,6 +134,13 @@ const OrdersPage = () => {
                     <Link to={`/orders/${order.order_id}`} className="btn btn-outline btn-sm">
                       <i className="fas fa-eye"></i> View Details
                     </Link>
+                    <button 
+                      className="btn btn-secondary btn-sm" 
+                      onClick={() => handleViewReceipt(order.order_id)}
+                      title="View Receipt"
+                    >
+                      <i className="fas fa-receipt"></i> Receipt
+                    </button>
                     {order.status === 'shipped' && (
                       <Link to={`/orders/${order.order_id}`} className="btn btn-primary btn-sm">
                         <i className="fas fa-map-marker-alt"></i> Track Order
@@ -88,6 +153,21 @@ const OrdersPage = () => {
           </div>
         )}
       </div>
+
+      {/* Receipt Modal */}
+      {showReceipt && receiptData && (
+        <div className="modal-overlay">
+          <div className="modal-content receipt-modal">
+            <button className="modal-close" onClick={() => setShowReceipt(false)}>
+              <i className="fas fa-times"></i>
+            </button>
+            <Receipt 
+              orderData={receiptData} 
+              userType="user"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

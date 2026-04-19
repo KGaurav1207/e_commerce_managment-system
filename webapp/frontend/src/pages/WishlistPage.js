@@ -20,20 +20,21 @@ const WishlistPage = () => {
 
   useEffect(() => { fetchWishlist(); }, []);
 
-  const removeFromWishlist = async (productId) => {
+  const removeFromWishlist = async (productId, productName) => {
     try {
       await api.delete(`/wishlist/${productId}`);
       setItems(items.filter(i => i.product_id !== productId));
-      toast.success('Removed from wishlist');
-    } catch { toast.error('Error removing item'); }
+      toast.success(`${productName} removed from your wishlist`);
+    } catch { toast.error('Could not remove item from wishlist'); }
   };
 
-  const moveToCart = async (productId) => {
+  const moveToCart = async (productId, productName) => {
     try {
       await addToCart(productId, 1);
-      await removeFromWishlist(productId);
-      toast.success('Moved to cart!');
-    } catch { toast.error('Error'); }
+      await api.delete(`/wishlist/${productId}`);
+      setItems(items.filter(i => i.product_id !== productId));
+      toast.success(`${productName} moved to your cart!`);
+    } catch { toast.error('Could not move item to cart'); }
   };
 
   if (loading) return <div className="spinner-wrapper"><div className="spinner"></div></div>;
@@ -78,7 +79,7 @@ const WishlistPage = () => {
                       />
                     </Link>
                     {discount && <span className="discount-badge">{discount}% OFF</span>}
-                    <button className="remove-wish-btn" onClick={() => removeFromWishlist(item.product_id)}>
+                    <button className="remove-wish-btn" onClick={() => removeFromWishlist(item.product_id, item.name)}>
                       <i className="fas fa-times"></i>
                     </button>
                   </div>
@@ -97,7 +98,7 @@ const WishlistPage = () => {
                       ))}
                     </div>
                     <div className="wish-actions">
-                      <button className="btn btn-primary btn-full btn-sm" onClick={() => moveToCart(item.product_id)}>
+                      <button className="btn btn-primary btn-full btn-sm" onClick={() => moveToCart(item.product_id, item.name)}>
                         <i className="fas fa-shopping-cart"></i> Move to Cart
                       </button>
                     </div>
